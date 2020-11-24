@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
+import {getTracks} from './action/tracks';
 
 class App extends Component {
     addTrack(){
@@ -7,16 +8,29 @@ class App extends Component {
         this.props.onAddTrack(this.trackInput.value);
         this.trackInput.value = "";
     }
+    findTrack(){
+        console.log("searchInput", this.searchInput.value);
+        this.props.onFindTrack(this.searchInput.value);
+    }
     render(){
-        console.log(this.props.testStore);
+       // console.log(this.props.testStore);
         return (
             <div>
-                <input type="text" ref={(input) => {this.trackInput = input}} />
-                <button onClick = {this.addTrack.bind(this)}> Add Track</button>
+                <div>
+                    <input type="text" ref={(input) => {this.trackInput = input}} />
+                    <button onClick = {this.addTrack.bind(this)}> Add Track</button>
+                </div>
+                <div>
+                    <input type="text" ref={(input) => {this.searchInput = input}} />
+                    <button onClick = {this.findTrack.bind(this)}> Find track</button>
+                </div>
+                <div>
+                    <button onClick = {this.props.onGetTracks}> Get tracks </button>
+                </div>
                 <ul>
                     {
-                        this.props.testStore.map((track, index) =>
-                        { return <li key = { index } >{ track }</li>}
+                        this.props.tracks.map((track, index) =>
+                        { return <li key = { index } >{ track.name }</li>}
                     )}
                 </ul>
             </div>
@@ -26,11 +40,22 @@ class App extends Component {
 
 export default connect(
     state => ({
-        testStore: state
+       // tracks: state.tracks
+        tracks: state.tracks.filter(track => track.name.includes(state.filterTracks))
     }),
     dispatch => ({
-        onAddTrack: (trackName) => {
-                dispatch ({type: 'ADD_TRACK', payload: trackName});
-            }
+        onAddTrack: (name) => {
+            const payload = {
+                id: Date.now().toString(),
+                name
+            };
+                dispatch ({type: 'ADD_TRACK', payload});
+            },
+        onFindTrack: (name) => {
+            dispatch ({type: 'FIND_TRACK', payload: name});
+        },
+        onGetTracks: () => {
+            dispatch(getTracks());
+        }
     })
 )(App);

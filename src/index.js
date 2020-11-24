@@ -1,27 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {createStore} from 'redux';
+import {createStore, applyMiddleware } from 'redux';
+import {composeWithDevTools} from 'redux-devtools-extension';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+
 import App from './App';
 import './index.css';
+import reducers from './reducers'
 
+const initialState = {
+    tracks: [
+        'Smell like teen spirit',
+        'pink'
+    ],
+    playlists: [
+        "my home playlist",
+        "my work playlist"
+    ]
 
-const initialState = [
-    'Smell like teen spirit',
-    'pink'
-];
+};
 
-function playlist(state = initialState, action) {
-    // console.log("action ", action, " state = " , state); //1 , 3
-    if ( action.type === 'ADD_TRACK')
-        return [
-            ...state,
-            action.payload
-        ];
-    return state;
-}
-
-const store = createStore(playlist);
+//const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 
 ReactDOM.render(
     <Provider store={store}>

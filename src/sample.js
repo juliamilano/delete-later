@@ -32,13 +32,24 @@ store.dispatch({ type: 'counter/decremented' })
 import React from 'react';
 import {createStore} from 'redux';
 
-function playlist(state = [], action) {
+function playlist(state = initialState, action) {
     // console.log("action ", action, " state = " , state); //1 , 3
-    if ( action.type === 'ADD_TRACK')
-        return [
+    if (action.type === 'ADD_TRACK'){
+        return {
             ...state,
-            action.payload
-        ];
+            tracks: [...state.tracks, action.payload]
+        };
+    } else if (action.type === 'ADD_PLAYLIST'){
+        return state;
+    } else if (action.type === 'DELETE_TRACK'){
+        return state;
+    } else if (action.type === 'DELETE_PLAYLIST'){
+        return state;
+    }
+    // return [
+    //     ...state,
+    //     action.payload
+    // ];
     return state;
 }
 
