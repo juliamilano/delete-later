@@ -16,12 +16,17 @@ export default function playlist(state = initialState, action) {
     }
     else if (action.type === 'EDIT_TRACK') {
         //console.log("EDIT_TRACK action ", action, " state = " , state); //1 , 3
+        let data = [...state];
+        data.forEach((item) => {
+           if(item.id == action.payload.id) {
+               item.name = action.payload.text;
+           }
+        });
         return [
-            ...state,
-            action.payload
+            ...data
         ];
     } else if (action.type === 'FETCH_TRACKS_SUCCESS'){
-        debugger;
+        //debugger;
         return [...state, ...action.payload];
     }
     return state;

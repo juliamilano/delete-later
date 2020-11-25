@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {getTracks} from './action/tracks';
-
+import TrackComponent from "./track.component";
 
 
 class App extends Component {
+    state = {
+        flags: [true]
+    };
     addTrack(){
         //console.log("addTrack", this.trackInput.value, this.props.onAddTrack);
         this.props.onAddTrack(this.trackInput.value);
@@ -22,14 +25,28 @@ class App extends Component {
         console.log("deleteData", id);
         this.props.onDeleteData(id);
     }
-    btnEdit = "<button onClick = \{this.editData.bind\(this, track.id\)\}> ok </button>";
-    flag = false;
-    editInput(){
+    //btnEdit = "<button onClick = \{this.editData.bind\(this, track.id\)\}> ok </button>";
+
+    editInput = () => {
+        console.log(this.flag);
         this.flag = true;
+        if (!this.flag){
+            this.btn = <button onClick={this.editInput}> edit </button>;
+            //debugger;
+        }
+        else {
+            // debugger;
+            this.btn = <input type="text" ref={(input) => {this.editInput = input}} /> /
+                <button onClick = {this.editData.bind(this, this.editInput)}> ok </button>  /
+                <button onClick = {this.editInput = ""}> return </button>;
+        }
     }
-    render(){
+
+    render() {
        // console.log(this.props.testStore);
         let space = {display:'inline-block', background: "pink",  width: '20px', height:'3px'};
+        this.btn = <button onClick={this.editInput}> edit </button>;
+
         return (
             <div>
                 <div>
@@ -50,8 +67,7 @@ class App extends Component {
                             return (
                                 <li key = { index } >{ track.name }
                             <div style = {space}></div>
-                                <button onClick = {this.editInput.bind(this)}> edit </button>
-
+                                    <TrackComponent onEditData={this.props.onEditData} track={track}></TrackComponent>
                             <div style = {space}></div>
                                 <button onClick = {this.deleteData.bind(this, track.id)}> del </button>
                             </li>)
@@ -67,13 +83,16 @@ class App extends Component {
 export default connect(
     state => ({
        // tracks: state.tracks
-        tracks: state.tracks.filter(track => track.name.includes(state.filterTracks))
+        tracks: state.tracks.filter(track => {
+            return track.name.includes(state.filterTracks)
+        })
     }),
     dispatch => ({
         onAddTrack: (name) => {
             const payload = {
                 id: Date.now().toString(),
-                name
+                name,
+                show: true
             };
                 dispatch ({type: 'ADD_TRACK', payload});
             },
